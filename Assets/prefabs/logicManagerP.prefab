@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 905065174489248651}
   - component: {fileID: 8240299958344416765}
   m_Layer: 0
-  m_Name: LogicManager
+  m_Name: logicManagerP
   m_TagString: Logic
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -685,6 +685,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2045149027783672154, guid: c754c57548ba99c49974cb4915d8853c, type: 3}
   m_PrefabInstance: {fileID: 1097983761}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1163921573 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+  m_PrefabInstance: {fileID: 7031474463667267254}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1214096774
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -747,6 +758,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5769985922470562596, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
   m_PrefabInstance: {fileID: 7031474463667267254}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1558790074 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1257760681082768184, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+  m_PrefabInstance: {fileID: 7031474463667267254}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1558790072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebfe7657ade43b94988c30d3551707ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1625835618
 GameObject:
   m_ObjectHideFlags: 0
@@ -958,7 +980,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b66edafbd19008040b7b850d164694c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logic: {fileID: 0}
 --- !u!19719996 &1625835624
 TilemapCollider2D:
   m_ObjectHideFlags: 0
@@ -15272,6 +15293,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8240299958344416765, guid: 42556b1f945046a42be229649adc2798, type: 3}
+      propertyPath: restartButton
+      value: 
+      objectReference: {fileID: 1163921573}
+    - target: {fileID: 8240299958344416765, guid: 42556b1f945046a42be229649adc2798, type: 3}
+      propertyPath: GameoverScript
+      value: 
+      objectReference: {fileID: 1558790074}
+    - target: {fileID: 8240299958344416765, guid: 42556b1f945046a42be229649adc2798, type: 3}
       propertyPath: gameoverScreen
       value: 
       objectReference: {fileID: 1558790072}
@@ -15292,6 +15321,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1257760681082768184, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: restartButton
+      value: 
+      objectReference: {fileID: 1163921573}
     - target: {fileID: 1567609782878850855, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
       propertyPath: m_Camera
       value: 
@@ -15301,12 +15334,44 @@ PrefabInstance:
       value: Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 990586606}
     - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 8630227286067815645, guid: 42556b1f945046a42be229649adc2798, type: 3}
+    - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: RestartGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309771465194739302, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5769985922470562596, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6039916853340319546, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
       propertyPath: m_Pivot.x

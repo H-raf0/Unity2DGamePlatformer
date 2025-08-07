@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class FinishLineScript : MonoBehaviour
 {
-    public LogicScript logic;
+    private LogicScript logic;
     void Start()
     {
         logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();

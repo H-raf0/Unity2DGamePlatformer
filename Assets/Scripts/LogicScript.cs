@@ -7,6 +7,7 @@ public class LogicScript : MonoBehaviour
 {
     public GameObject gameoverScreen;
     public Button restartButton;
+    public GameoverScript GameoverScript;
 
     private void Start()
     {
@@ -22,15 +23,9 @@ public class LogicScript : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
-
+    
     public void GameOver()
     {
-        gameoverScreen.SetActive(true);
-
-        // Clear any previous selections
-        EventSystem.current.SetSelectedGameObject(null);
-
-        // Set a new default selection, pressing "enter" will trigger the selection
-        EventSystem.current.SetSelectedGameObject(restartButton.gameObject);
+        GameoverScript.GameOver();
     }
 }
