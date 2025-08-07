@@ -233,6 +233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   restartButton: {fileID: 0}
+  mainMenuButton: {fileID: 0}
 --- !u!1001 &8470977010896304617
 PrefabInstance:
   m_ObjectHideFlags: 0
