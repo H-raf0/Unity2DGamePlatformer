@@ -5,13 +5,23 @@ using UnityEngine.EventSystems;
 
 public class LogicScript : MonoBehaviour
 {
-    public GameObject gameoverScreen;
-    public Button restartButton;
-    public GameoverScript GameoverScript;
+    [SerializeField] private GameObject gameoverObject;
+    private GameoverScript GameoverScript;
+
+    public static LogicScript instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
 
     private void Start()
     {
         Application.targetFrameRate = 60;
+        GameoverScript = gameoverObject.GetComponent<GameoverScript>();
     }
   
     public void RestartGame()
@@ -25,7 +35,7 @@ public class LogicScript : MonoBehaviour
     }
     
     public void GameOver()
-    {
+    {   
         GameoverScript.GameOver();
     }
 }

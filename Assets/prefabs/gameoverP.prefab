@@ -232,8 +232,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebfe7657ade43b94988c30d3551707ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restartButton: {fileID: 0}
-  mainMenuButton: {fileID: 0}
 --- !u!1001 &8470977010896304617
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -13442,7 +13442,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b66edafbd19008040b7b850d164694c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logic: {fileID: 0}
 --- !u!1001 &5599281639571133469
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13492,6 +13491,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8240299958344416765, guid: 42556b1f945046a42be229649adc2798, type: 3}
+      propertyPath: gameoverObject
+      value: 
+      objectReference: {fileID: 1558790072}
+    - target: {fileID: 8240299958344416765, guid: 42556b1f945046a42be229649adc2798, type: 3}
       propertyPath: gameoverScreen
       value: 
       objectReference: {fileID: 1558790072}
@@ -13524,6 +13527,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 990586606}
+    - target: {fileID: 5769985922470562596, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6039916853340319546, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -13674,9 +13681,9 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 5599281639571133469}
+  - {fileID: 7031474463667267254}
   - {fileID: 519420032}
   - {fileID: 7942271638305896709}
   - {fileID: 1732873706}
   - {fileID: 485893943}
-  - {fileID: 7031474463667267254}
-  - {fileID: 5599281639571133469}

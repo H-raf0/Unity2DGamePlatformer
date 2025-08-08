@@ -6,8 +6,8 @@ public class characterScript : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private AudioClip jumpSoundClip;
 
-    public LogicScript logic;
     public float jumpPower = 21f;
     public float speed = 5f;
     public Transform characterSprite;
@@ -21,7 +21,7 @@ public class characterScript : MonoBehaviour
     void Start()
     {
         gameObject.name = "Main Character";
-        logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
+        //logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
     }
 
     private void Update()
@@ -44,12 +44,13 @@ public class characterScript : MonoBehaviour
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
+                SoundFXManager.instance.PlaySoundFXClip(jumpSoundClip, transform, 1f);
             }
 
             if (rb.position.y <= -11f)
             {
                 isAlive = false;
-                logic.GameOver();
+                LogicScript.instance.GameOver();
                 Debug.Log("Game Over");
             }
 
@@ -104,8 +105,8 @@ public class characterScript : MonoBehaviour
             // should I include it in the game over function? 
             float yVelocitySign = Mathf.Sign(rb.linearVelocity.y);
             rb.linearVelocity = new Vector2((isFacingRight ? -1 : 1) * pushForce, pushForce * 2.5f);
-            
-            logic.GameOver();
+
+            LogicScript.instance.GameOver();
         }
     }
 }
