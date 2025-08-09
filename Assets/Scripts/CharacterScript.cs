@@ -7,6 +7,7 @@ public class characterScript : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private AudioClip jumpSoundClip;
+    [SerializeField] private AudioClip hitSoundClip;
 
     public float jumpPower = 21f;
     public float speed = 5f;
@@ -100,9 +101,10 @@ public class characterScript : MonoBehaviour
         {
             //Debug.Log("Player hit an obstacle!");
             isAlive = false;
+            SoundFXManager.instance.PlaySoundFXClip(hitSoundClip, transform, 1f);
 
             // Push the character when it is not alive in an opposite direction
-            // should I include it in the game over function? 
+            // should I include it in the game over function? no! 
             float yVelocitySign = Mathf.Sign(rb.linearVelocity.y);
             rb.linearVelocity = new Vector2((isFacingRight ? -1 : 1) * pushForce, pushForce * 2.5f);
 

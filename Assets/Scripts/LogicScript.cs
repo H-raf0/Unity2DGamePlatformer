@@ -23,11 +23,6 @@ public class LogicScript : MonoBehaviour
         Application.targetFrameRate = 60;
         GameoverScript = gameoverObject.GetComponent<GameoverScript>();
     }
-  
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
 
     public void LoadNextLevel()
     {
@@ -37,5 +32,13 @@ public class LogicScript : MonoBehaviour
     public void GameOver()
     {   
         GameoverScript.GameOver();
+    }
+    public void RestartGame()
+    {
+        GameoverScript.RestartGame();
+    }
+    public void MainManu()
+    {
+        GameoverScript.MainMenu();
     }
 }
