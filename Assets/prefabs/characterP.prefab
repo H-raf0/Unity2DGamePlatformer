@@ -43,8 +43,9 @@ GameObject:
   - component: {fileID: 4341264204354094597}
   - component: {fileID: 8858978780942126005}
   - component: {fileID: 7500837210742973851}
-  - component: {fileID: 5264465667523957718}
   - component: {fileID: 8587808197178836045}
+  - component: {fileID: 5264465667523957718}
+  - component: {fileID: 1372817279072673538}
   m_Layer: 0
   m_Name: characterP
   m_TagString: Player
@@ -196,30 +197,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.41965485, y: 0.615417}
   m_EdgeRadius: 0
---- !u!114 &5264465667523957718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2668464370178360147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28cbdb4f1d042d7498071940ac3598bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myAnimator: {fileID: 8587808197178836045}
-  rb: {fileID: 8858978780942126005}
-  groundCheck: {fileID: 4646438706074577164}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  logic: {fileID: 0}
-  jumpPower: 21
-  speed: 5
-  characterSprite: {fileID: 5348338982856027236}
-  rotationSpeed: 400
-  pushForce: 6
 --- !u!95 &8587808197178836045
 Animator:
   serializedVersion: 7
@@ -242,3 +219,41 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5264465667523957718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668464370178360147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28cbdb4f1d042d7498071940ac3598bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myAnimator: {fileID: 8587808197178836045}
+  rb: {fileID: 8858978780942126005}
+  groundCheck: {fileID: 4646438706074577164}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  jumpSoundClip: {fileID: 0}
+  hitSoundClip: {fileID: 0}
+  startSoundClip: {fileID: 0}
+  jumpPower: 21
+  speed: 5
+  characterSprite: {fileID: 5348338982856027236}
+  rotationSpeed: 400
+  pushForce: 6
+--- !u!114 &1372817279072673538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668464370178360147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9eec481ba547554690129563b681d5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -6,8 +6,10 @@ public class characterScript : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+
     [SerializeField] private AudioClip jumpSoundClip;
     [SerializeField] private AudioClip hitSoundClip;
+    [SerializeField] private AudioClip startSoundClip; // hit reversed
 
     public float jumpPower = 21f;
     public float speed = 5f;
@@ -15,6 +17,7 @@ public class characterScript : MonoBehaviour
     public float rotationSpeed = 400f; // Rotation speed when the character dies
     public float pushForce = 6f;      // force applied to the character in the opposite direction when it hits an obstacle 
 
+    private PlayerControllerScript playerControllerScript;
     private int horizontalInput;       // -1 for left, 0 for none, 1 for right
     private bool isFacingRight = true;
     private bool isAlive = true;
@@ -22,6 +25,9 @@ public class characterScript : MonoBehaviour
     void Start()
     {
         gameObject.name = "Main Character";
+        SoundFXManagerScript.instance.PlaySoundFXClip(startSoundClip, transform, 1f);
+        playerControllerScript = GetComponent<PlayerControllerScript>();
+        
         //logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
     }
 
@@ -29,11 +35,11 @@ public class characterScript : MonoBehaviour
     {
         if (isAlive)
         {
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.D) || playerControllerScript.moveRight)
             {
                 horizontalInput = 1;
             }
-            else if (Input.GetKey(KeyCode.A))
+            else if (Input.GetKey(KeyCode.A) || playerControllerScript.moveLeft)
             {
                 horizontalInput = -1;
             }
@@ -45,7 +51,7 @@ public class characterScript : MonoBehaviour
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
-                SoundFXManager.instance.PlaySoundFXClip(jumpSoundClip, transform, 1f);
+                SoundFXManagerScript.instance.PlaySoundFXClip(jumpSoundClip, transform, 1f);
             }
 
             if (rb.position.y <= -11f)
@@ -101,7 +107,7 @@ public class characterScript : MonoBehaviour
         {
             //Debug.Log("Player hit an obstacle!");
             isAlive = false;
-            SoundFXManager.instance.PlaySoundFXClip(hitSoundClip, transform, 1f);
+            SoundFXManagerScript.instance.PlaySoundFXClip(hitSoundClip, transform, 1f);
 
             // Push the character when it is not alive in an opposite direction
             // should I include it in the game over function? no! 
