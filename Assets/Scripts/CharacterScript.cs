@@ -48,7 +48,7 @@ public class characterScript : MonoBehaviour
                 horizontalInput = 0;
             }
 
-            if (Input.GetButtonDown("Jump") && IsGrounded())
+            if ((Input.GetButtonDown("Jump") || playerControllerScript.jump) && IsGrounded())
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
                 SoundFXManagerScript.instance.PlaySoundFXClip(jumpSoundClip, transform, 1f);
@@ -57,6 +57,7 @@ public class characterScript : MonoBehaviour
             if (rb.position.y <= -11f)
             {
                 isAlive = false;
+                SoundFXManagerScript.instance.PlaySoundFXClip(hitSoundClip, transform, 1f);
                 LogicScript.instance.GameOver();
                 Debug.Log("Game Over");
             }

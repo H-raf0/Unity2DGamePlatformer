@@ -4,7 +4,7 @@ public class SoundFXManagerScript : MonoBehaviour
 {
     public static SoundFXManagerScript instance;
 
-    [SerializeField] private AudioSource soundFXObject;
+    private AudioSource soundFXObject;
 
     private void Awake()
     {
@@ -12,8 +12,8 @@ public class SoundFXManagerScript : MonoBehaviour
         {
             instance = this;    
         }
+        soundFXObject = GetComponent<AudioSource>();
     }
-
     public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume)
     {
         // sapwn in gameObject
