@@ -1206,7 +1206,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2290840389431763623, guid: f36b3f642ea0f084f8bf73fd193990aa, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -737
+      value: -669
       objectReference: {fileID: 0}
     - target: {fileID: 2290840389431763623, guid: f36b3f642ea0f084f8bf73fd193990aa, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -18776,7 +18776,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2290840389431763623, guid: f36b3f642ea0f084f8bf73fd193990aa, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -549
+      value: -481.00006
       objectReference: {fileID: 0}
     - target: {fileID: 2290840389431763623, guid: f36b3f642ea0f084f8bf73fd193990aa, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -19111,7 +19111,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3298191217569296589, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
       propertyPath: m_Name
-      value: MenusScreen
+      value: UI
       objectReference: {fileID: 0}
     - target: {fileID: 3298191217569296589, guid: 0135908cebd39f94a9e6a87e1199ba02, type: 3}
       propertyPath: m_IsActive

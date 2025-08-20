@@ -1,91 +1,102 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class SpikeScript : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f; // Speed of movement
-    private bool hasMoved = false; // Prevent multiple triggers
-    private float multiplier = 1f; // Direction multiplier
+    [SerializeField] private float moveSpeed = 5f;  // Higher = faster (duration ≈ 1 / moveSpeed)
+    private bool hasMoved = false;                  // Prevent multiple triggers
+    private float multiplier = 1f;                  // Travel distance in "direction" units
     private Vector2 direction;
+
+    [Header("Grouping")]
+    public int groupID = 0; // Spikes with the same groupID trigger together
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && !hasMoved)
         {
-            hasMoved = true;
-
-            // Get all colliders attached to the GameObject
-            Collider2D[] colliders = GetComponents<Collider2D>();
-
-            // Find the specific collider you want (e.g., CircleCollider2D)
-            CircleCollider2D circleCollider = null;
-
-            foreach (var collider in colliders)
-            {
-                if (collider is CircleCollider2D)
-                {
-                    circleCollider = (CircleCollider2D)collider;
-                }
-            }
-
-            // Use the specific collider's offset
-            if (circleCollider != null)
-            {
-                float offsetX = circleCollider.offset.x;
-                if (offsetX < -1f)
-                {
-                    Debug.Log("Circle Collider Offset X: " + offsetX);
-                    multiplier = 8f;
-                    moveSpeed = 2f;
-                }
-            }
-
-            StartCoroutine(MoveSpike());
-        }
-    }
-
-    IEnumerator MoveSpike()
-    {
-        Vector2 startPosition = transform.position;
-        float zRotation = transform.eulerAngles.z;
-        Debug.Log("ROTATION: " + zRotation);
-
-        if (zRotation == 0 || zRotation == 180)
-        {
-            direction.y = 0;
-            if (zRotation == 180)
-            {
-                direction.x = 1;
+            // When one is hit, activate the whole group.
+            if (this.groupID != 0) {
+                ActivateGroup();
             }
             else
             {
-                direction.x = -1;
+                ActivateFromGroup(); // If groupID is 0, this spike is not in a group.
             }
         }
-        else
+    }
+
+    // Activates all spikes that share this spike's groupID.
+    private void ActivateGroup()
+    {
+        // Updated to use FindObjectsByType with FindObjectsSortMode.None for better performance.
+        SpikeScript[] all = FindObjectsByType<SpikeScript>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+
+        foreach (var spike in all)
         {
-            direction.x = 0;
-            if (zRotation == 90)
+            if (spike.groupID == this.groupID)
             {
-                direction.y = -1;
-            }
-            else if (zRotation == 270)
-            {
-                direction.y = 1;
+                spike.ActivateFromGroup();
             }
         }
+    }
 
-        Debug.Log("Direction: " + direction);
-        Vector2 targetPosition = startPosition + direction * multiplier; // Move forward
+    // Called when the group triggers this spike (or if this spike is the origin).
+    // Ensures per-spike setup runs, but only once.
+    private void ActivateFromGroup()
+    {
+        if (hasMoved) return;
 
-        float time = 0;
-        while (time < 1)
+        hasMoved = true;
+
+        CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
+
+        if (circleCollider != null)
         {
-            transform.position = Vector2.Lerp(startPosition, targetPosition, time);
-            time += Time.deltaTime * moveSpeed;
+            float offsetX = circleCollider.offset.x;
+            if (offsetX < -1f)
+            {
+                Debug.Log("Circle Collider Offset X: " + offsetX + " on " + name);
+                multiplier = 8f;  // move farther
+                moveSpeed = 2f;   // move slower
+            }
+        }
+        // If no circle collider or condition not met → keep defaults.
+
+        // Start the movement for this spike.
+        StartCoroutine(MoveSpike());
+    }
+    private IEnumerator MoveSpike()
+    {
+        Vector2 startPosition = transform.position;
+
+        // Robust direction: snap Z to nearest 90 degrees (0, 90, 180, 270).
+        float z = transform.eulerAngles.z;
+
+        switch (z)
+        {
+            case 0: direction = Vector2.left; break;
+            case 90: direction = Vector2.down; break;
+            case 180: direction = Vector2.right; break;
+            case 270: direction = Vector2.up; break;
+            default:
+                Debug.Log("error in rotation value");
+                break;
+        }
+
+        Debug.Log($"[{name}] Z:{z:F2}, dir:{direction}");
+
+        Vector2 targetPosition = startPosition + direction * multiplier;
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            // Lerp parameter t grows at moveSpeed per second ⇒ duration ≈ 1 / moveSpeed.
+            transform.position = Vector2.Lerp(startPosition, targetPosition, t);
+            t += Time.deltaTime * moveSpeed;
             yield return null;
         }
 
-        transform.position = targetPosition; // Ensure final position is exact
+        transform.position = targetPosition; // ensure exact final position
     }
 }

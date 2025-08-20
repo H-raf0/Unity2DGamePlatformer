@@ -27,7 +27,7 @@ public class LogicScript : MonoBehaviour
     public void LoadNextLevel()
     {
         Debug.Log("loading next scene\n");
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
     
     public void GameOver()

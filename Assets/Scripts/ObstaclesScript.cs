@@ -3,24 +3,14 @@ using UnityEngine;
 public class ObstaclesScript : MonoBehaviour
 {
 
-    [SerializeField] private GameObject obstacles;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
-        for (int i = 0; i < obstacles.transform.childCount; i++)
+        // Only look at SpikeScripts that are children of THIS Obstacles object
+        SpikeScript[] spikes = GetComponentsInChildren<SpikeScript>();
+
+        foreach (SpikeScript spike in spikes)
         {
-            Transform child = obstacles.transform.GetChild(i);
-
-            child.name = "spike " + i;
-            child.Translate(Vector2.right);
+            spike.transform.Translate(Vector2.right);
         }
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
