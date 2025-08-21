@@ -3,47 +3,70 @@ using UnityEngine;
 public class MovingPlatformScript : MonoBehaviour
 {
     [Header("Movement")]
-    public Vector2 targetPosition;
     public float speed = 2f;
 
-    private Vector2 initPosition;
-    private bool goingToTarget = true; // Track which way we're moving
+    [Header("Waypoints")]
+    public Transform pointA;
+    public Transform pointB;
 
-    protected virtual void Start()
+    [Header("splittable")]
+    public bool canSplit = false;
+
+    private Vector3 initPointA;
+    private Vector3 initPointB;
+    private Vector3 currentTarget;
+
+    
+    private Rigidbody2D rb;
+    private Vector3 moveDirection;
+
+    private void Awake()
     {
-        initPosition = transform.position;
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    protected virtual void Update()
-    {
-        Move();
+
+    private void Start()
+    {   
+        initPointA = pointA.position;
+        initPointB = pointB.position;
+        // Start by moving towards Point B
+        currentTarget = initPointB;
+        CalculateDirection();
     }
 
-    protected void Move()
+    private void Update()
     {
-        Vector2 currentTarget = goingToTarget ? targetPosition : initPosition;
-        transform.position = Vector2.MoveTowards(transform.position, currentTarget, speed * Time.deltaTime);
-
-        if (Vector2.Distance(transform.position, currentTarget) < 0.01f)
+        // Check if the platform has reached the current target
+        // A very small threshold like 0.01f is used for accuracy.
+        if (Vector3.Distance(transform.position, currentTarget) < 0.1f)
         {
-            goingToTarget = !goingToTarget; // Flip direction
+            // If the current target was Point B, switch to Point A
+            if (currentTarget == initPointB)
+            {
+                currentTarget = initPointA;
+                CalculateDirection();
+            }
+            // If the current target was Point A, switch to Point B
+            else
+            {
+                currentTarget = initPointB;
+                CalculateDirection();
+            }
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void FixedUpdate()
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            other.gameObject.transform.parent = transform;
-        }
+        rb.linearVelocity = moveDirection * speed;
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    private void CalculateDirection()
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            other.gameObject.transform.parent = null;
-        }
+        // Calculate the direction to move towards the current target
+        moveDirection = (currentTarget - transform.position).normalized;
     }
+    
+
+
 }
-

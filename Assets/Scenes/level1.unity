@@ -747,7 +747,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d7075bf75009c4f80d8ea5917e06f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstacles: {fileID: 945383889}
 --- !u!4 &945383891
 Transform:
   m_ObjectHideFlags: 0
@@ -19312,7 +19311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4341264204354094597, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5264465667523957718, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
       propertyPath: logic
@@ -19370,6 +19369,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7500837210742973851, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 45b937e2265a6654fa3cff4d9b78a186, type: 2}
+    - target: {fileID: 8858978780942126005, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 45b937e2265a6654fa3cff4d9b78a186, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
