@@ -68,10 +68,10 @@ public class SpikeScript : MonoBehaviour
     }
     private IEnumerator MoveSpike()
     {
-        Vector2 startPosition = transform.position;
+        Vector2 startPosition = transform.localPosition;
 
         // Robust direction: snap Z to nearest 90 degrees (0, 90, 180, 270).
-        float z = transform.eulerAngles.z;
+        float z = Mathf.Round(transform.localEulerAngles.z);
 
         switch (z)
         {
@@ -92,11 +92,11 @@ public class SpikeScript : MonoBehaviour
         while (t < 1f)
         {
             // Lerp parameter t grows at moveSpeed per second ⇒ duration ≈ 1 / moveSpeed.
-            transform.position = Vector2.Lerp(startPosition, targetPosition, t);
+            transform.localPosition = Vector2.Lerp(startPosition, targetPosition, t);
             t += Time.deltaTime * moveSpeed;
             yield return null;
         }
 
-        transform.position = targetPosition; // ensure exact final position
+        transform.localPosition = targetPosition; // ensure exact final position
     }
 }
