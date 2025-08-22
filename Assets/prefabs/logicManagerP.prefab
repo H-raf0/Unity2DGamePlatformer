@@ -15,7 +15,7 @@ GameObject:
   m_TagString: Logic
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &905065174489248651
 Transform:
@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d553325b4944f264e9346efeab9ff4d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameoverScreen: {fileID: 0}
+  gameoverObject: {fileID: 0}
+  mainCamera: {fileID: 0}
+  uiTransform: {fileID: 0}

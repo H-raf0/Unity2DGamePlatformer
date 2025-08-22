@@ -5,10 +5,19 @@ using UnityEngine.EventSystems;
 
 public class LogicScript : MonoBehaviour
 {
+    [Header("UI")]
     [SerializeField] private GameObject gameoverObject;
-    private GameoverScript GameoverScript;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Transform uiTransform;
+    
+    [Header("Spawning")]
+    [Tooltip("The transform where the player should currently spawn.")]
+    public Transform currentCheckpoint;
 
     public static LogicScript instance;
+
+    private GameoverScript GameoverScript;
+
 
     private void Awake()
     {
@@ -28,6 +37,7 @@ public class LogicScript : MonoBehaviour
     {
         Debug.Log("loading next scene\n");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+
     }
     
     public void GameOver()
