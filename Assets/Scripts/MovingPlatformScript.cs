@@ -96,18 +96,28 @@ public class MovingPlatformScript : MonoBehaviour
             hasSplit = true;
             Debug.Log("Platform is splitting!");
 
-            // Activate the colliders on the child objects
-            Collider2D[] childColliders = GetComponentsInChildren<Collider2D>();
-            foreach (Collider2D col in childColliders)
+            // Enable the colliders on each CHILD object.
+            foreach (Transform child in transform)
             {
-                col.enabled = true;
+                Collider2D childCollider = child.GetComponent<Collider2D>();
+                if (childCollider != null)
+                {
+                    childCollider.enabled = true;
+                }
             }
 
-            // Deactivate all colliders on THIS parent object
+            // Disable ONLY the solid collider on THIS PARENT object.
             Collider2D[] parentColliders = GetComponents<Collider2D>();
             foreach (Collider2D col in parentColliders)
             {
-                col.enabled = false;
+                
+                // We check if the collider is NOT a trigger.
+                if (!col.isTrigger)
+                {
+                    // If it's the solid, physical collider, disable it.
+                    // The trigger collider will be ignored and remain enabled.
+                    col.enabled = false;
+                }
             }
 
             StartCoroutine(OpenPlatformRoutine());

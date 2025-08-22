@@ -213,11 +213,13 @@ public class CharacterScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Obstacle"))
+        if (collision.gameObject.GetComponent<DamageZoneScript>() != null)
         {
             Die(true);
+            return;
         }
 
+        // Check the main object for the "Platform" tag.
         if (collision.gameObject.CompareTag("Platform"))
         {
             isOnMovingPlatform = true;

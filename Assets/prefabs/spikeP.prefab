@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4491562225598081098}
   - component: {fileID: 2421158977814403070}
   - component: {fileID: 2756977843779450951}
+  - component: {fileID: 6422919768331368564}
   m_Layer: 0
   m_Name: spikeP
   m_TagString: Obstacle
@@ -150,12 +151,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.0026172418, y: 0.24441156}
-      - {x: -0.4814614, y: 0.093996085}
-      - {x: -0.48146194, y: -0.10326578}
-      - {x: 0.00033145025, y: -0.23667625}
-      - {x: 0.46755815, y: -0.3887711}
-      - {x: 0.46755832, y: 0.3887701}
+    - - {x: 0.25746575, y: 0.49322632}
+      - {x: -0.5060838, y: 0.12866214}
+      - {x: -0.5063249, y: -0.13014604}
+      - {x: 0.25839037, y: -0.4914593}
+      - {x: 0.49378452, y: -0.4917661}
+      - {x: 0.49544856, y: 0.49585384}
   m_UseDelaunayMesh: 0
 --- !u!58 &2756977843779450951
 CircleCollider2D:
@@ -193,3 +194,15 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.57, y: 0}
   m_Radius: 1.23
+--- !u!114 &6422919768331368564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396742668188458118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc345b00e7978f64398bda950faf2c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

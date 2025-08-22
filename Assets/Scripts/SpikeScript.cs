@@ -11,21 +11,6 @@ public class SpikeScript : MonoBehaviour
     [Header("Grouping")]
     public int groupID = 0; // Spikes with the same groupID trigger together
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player") && !hasMoved)
-        {
-            // When one is hit, activate the whole group.
-            if (this.groupID != 0) {
-                ActivateGroup();
-            }
-            else
-            {
-                ActivateFromGroup(); // If groupID is 0, this spike is not in a group.
-            }
-        }
-    }
-
     // Activates all spikes that share this spike's groupID.
     private void ActivateGroup()
     {
@@ -61,7 +46,6 @@ public class SpikeScript : MonoBehaviour
                 moveSpeed = 2f;   // move slower
             }
         }
-        // If no circle collider or condition not met → keep defaults.
 
         // Start the movement for this spike.
         StartCoroutine(MoveSpike());
@@ -98,5 +82,21 @@ public class SpikeScript : MonoBehaviour
         }
 
         transform.localPosition = targetPosition; // ensure exact final position
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && !hasMoved)
+        {
+            // When one is hit, activate the whole group.
+            if (this.groupID != 0)
+            {
+                ActivateGroup();
+            }
+            else
+            {
+                ActivateFromGroup(); // If groupID is 0, this spike is not in a group.
+            }
+        }
     }
 }
