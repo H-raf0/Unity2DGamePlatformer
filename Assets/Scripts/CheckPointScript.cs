@@ -11,11 +11,6 @@ public class CheckPointScript : MonoBehaviour
             LevelManagerScript.instance.currentCheckpoint = this.transform;
 
             Debug.Log("Checkpoint reached!");
-
-            // ---------------TO DO :   unload the scene with the last checkpoint if it exist------------------------
-
-            // Optionally, disable the collider after use so the log isn't spammed.
-            // GetComponent<Collider2D>().enabled = false;
         }
     }
 }

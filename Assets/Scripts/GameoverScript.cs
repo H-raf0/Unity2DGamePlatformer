@@ -18,7 +18,5 @@ public class GameoverScript : MonoBehaviour
     public void MainMenu()
     {
         gameObject.SetActive(false);
-        // still not working
-        //SceneManager.LoadScene(0);
     }
 }

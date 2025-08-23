@@ -161,7 +161,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 4.5
+  m_GravityScale: 3.2
   m_Material: {fileID: 6200000, guid: eaf22a8848a0db7449f135e07ddaed62, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -241,7 +241,7 @@ MonoBehaviour:
   jumpSoundClip: {fileID: 8300000, guid: 7b1946dc864556447ba51fa12ff54ee6, type: 3}
   hitSoundClip: {fileID: 8300000, guid: beccd5928555a4e48a738c89f8b7ff70, type: 3}
   startSoundClip: {fileID: 8300000, guid: b588dc72056a36945a9012b58eb166cb, type: 3}
-  jumpPower: 21
+  jumpPower: 16
   speed: 5
   rotationSpeed: 400
   pushForce: 6

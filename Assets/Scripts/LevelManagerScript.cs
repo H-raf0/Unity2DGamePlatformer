@@ -99,44 +99,7 @@ public class LevelManagerScript : MonoBehaviour
     public void RestartGame()
     {
         if (isLoading) return;
-
-        isLoading = true;
-
-        // Hide the GameOver UI. Your GameoverScript should handle this.
-        if (gameoverScript != null)
-        {
-            gameoverScript.RestartGame();
-        }
-
-        // Find the player's script component.
-        CharacterScript playerScript = playerObject.GetComponent<CharacterScript>();
-        if (playerScript != null)
-        {
-            // Tell the player character to reset its state (become alive again).
-            playerScript.ResetState();
-        }
-
-        // Move the player to the last checkpoint.
-        // If no checkpoint has been reached, we need a fallback.
-        if (currentCheckpoint != null)
-        {
-            playerObject.transform.position = currentCheckpoint.position;
-        }
-        else
-        {
-            // Fallback: If no checkpoint is set, find the level's main StartPoint.
-            GameObject startPoint = GameObject.FindWithTag("StartPoint");
-            if (startPoint != null)
-            {
-                playerObject.transform.position = startPoint.transform.localPosition;
-            }
-            else
-            {
-                Debug.LogError("Could not restart: No current checkpoint is set and could not find a 'StartPoint' in the level.");
-            }
-        }
-
-        isLoading = false;
+        StartCoroutine(RestartLevelRoutine());
     }
 
     public void MainMenu()
@@ -145,37 +108,7 @@ public class LevelManagerScript : MonoBehaviour
         StartCoroutine(ReturnToMainMenuRoutine());
     }
 
-    private IEnumerator ReturnToMainMenuRoutine()
-    {
-        isLoading = true;
-
-        
-        // Deactivate player so they don't appear in the main menu
-        if (playerObject != null)
-        {
-            playerObject.SetActive(false);
-        }
-
-        if (gameoverScript != null)
-        {
-            gameoverScript.RestartGame();
-        }
-
-        // Unload all loaded levels
-        for (int i = firstLevelBuildIndex; i < SceneManager.sceneCountInBuildSettings; i++)
-        {
-            if (SceneManager.GetSceneByBuildIndex(i).isLoaded)
-            {
-                yield return SceneManager.UnloadSceneAsync(i);
-            }
-        }
-
-        // Load the Main Menu back
-        yield return SceneManager.LoadSceneAsync(mainMenuBuildIndex, LoadSceneMode.Additive);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(mainMenuBuildIndex));
-
-        isLoading = false;
-    }
+    
     #endregion
 
 
@@ -226,40 +159,111 @@ public class LevelManagerScript : MonoBehaviour
         int levelToPreload = nextLevelIndex + 1;
         int levelToUnload = currentLevelIndex;
 
+        // Preload the next part of the world (e.g., Level 3).
         if (levelToPreload < SceneManager.sceneCountInBuildSettings)
         {
             yield return SceneManager.LoadSceneAsync(levelToPreload, LoadSceneMode.Additive);
         }
 
+        // The player has crossed the boundary. Set the new level as "active".
         SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(nextLevelIndex));
 
-        // --- POSITION CAMERA LOGIC --- //
+        // Move the camera to the CameraPoint of the new active scene.
         MoveCameraToPoint();
 
-        // --- PLAYER TELEPORT LOGIC ---
         /*
-        GameObject nextStartPoint = GameObject.FindWithTag("StartPoint");
-        if (nextStartPoint != null && playerObject != null)
+        // The player is already in position, so we DO NOT teleport them.
+        // We just update the checkpoint to the start of the new area in case they die.
+        GameObject newStartPoint = FindObjectInActiveScene("StartPoint");
+        if (newStartPoint != null)
         {
-            playerObject.transform.position = nextStartPoint.transform.position;
+            currentCheckpoint = newStartPoint.transform;
         }
-        else
-        {
-            Debug.LogError($"Could not find 'StartPoint' in Level {nextLevelIndex}!");
-        }*/
-
-        if (SceneManager.GetSceneByBuildIndex(levelToUnload).isLoaded && currentCheckpoint.gameObject.scene == SceneManager.GetActiveScene())
+        */
+        // Unload the part of the world that is now behind the player.
+        if (SceneManager.GetSceneByBuildIndex(levelToUnload).isLoaded)
         {
             yield return SceneManager.UnloadSceneAsync(levelToUnload);
         }
 
+        // Update our master index.
         currentLevelIndex++;
         isLoading = false;
     }
 
 
+    // This new coroutine performs the unload/reload to guarantee a fresh level state.
+    private IEnumerator RestartLevelRoutine()
+    {
+        isLoading = true;
+
+        // Hide the GameOver UI panel.
+        if (gameoverScript != null)
+        {
+            gameoverScript.RestartGame(); // This just calls gameObject.SetActive(false);
+        }
+
+        // Unload the current, modified level scene.
+        yield return SceneManager.UnloadSceneAsync(currentLevelIndex);
+
+        // Immediately reload a clean version of the same level scene.
+        yield return SceneManager.LoadSceneAsync(currentLevelIndex, LoadSceneMode.Additive);
+
+        // Re-assert that this is the active scene.
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(currentLevelIndex));
+
+        // Move the camera to the correct position for this freshly loaded scene.
+        MoveCameraToPoint();
+
+        // Reset the player's state and place them at the level's designated start point.
+        CharacterScript playerScript = playerObject.GetComponent<CharacterScript>();
+        if (playerScript != null)
+        {
+            playerScript.ResetState();
+        }
+
+        // Find the start point within the newly loaded active scene.
+        GameObject startPoint = FindObjectInActiveScene("StartPoint");
+        if (startPoint != null)
+        {
+            playerObject.transform.position = startPoint.transform.position;
+            currentCheckpoint = startPoint.transform; // Also reset the checkpoint to the beginning.
+        }
+
+        isLoading = false;
+    }
+
+    private IEnumerator ReturnToMainMenuRoutine()
+    {
+        isLoading = true;
 
 
+        // Deactivate player so they don't appear in the main menu
+        if (playerObject != null)
+        {
+            playerObject.SetActive(false);
+        }
+
+        if (gameoverScript != null)
+        {
+            gameoverScript.RestartGame();
+        }
+
+        // Unload all loaded levels
+        for (int i = firstLevelBuildIndex; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            if (SceneManager.GetSceneByBuildIndex(i).isLoaded)
+            {
+                yield return SceneManager.UnloadSceneAsync(i);
+            }
+        }
+
+        // Load the Main Menu back
+        yield return SceneManager.LoadSceneAsync(mainMenuBuildIndex, LoadSceneMode.Additive);
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(mainMenuBuildIndex));
+
+        isLoading = false;
+    }
 
     #endregion
 
@@ -302,5 +306,20 @@ public class LevelManagerScript : MonoBehaviour
             // This error will now correctly tell if the ACTIVE scene is missing its camera point.
             Debug.LogError($"Could not find a 'CameraPoint' specifically within the active scene: {activeScene.name}");
         }
+    }
+
+    // Helper function to find a tagged object only within the current active scene.
+    private GameObject FindObjectInActiveScene(string tag)
+    {
+        GameObject[] allObjects = GameObject.FindGameObjectsWithTag(tag);
+        Scene activeScene = SceneManager.GetActiveScene();
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.scene == activeScene)
+            {
+                return obj;
+            }
+        }
+        return null; // Return null if nothing is found in the active scene
     }
 }
