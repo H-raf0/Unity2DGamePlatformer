@@ -108,7 +108,18 @@ public class LevelManagerScript : MonoBehaviour
         StartCoroutine(ReturnToMainMenuRoutine());
     }
 
-    
+    public void SetNewCheckpoint(Transform newCheckpoint)
+    {
+        Debug.Log($"New checkpoint set at {newCheckpoint.name} in scene {newCheckpoint.gameObject.scene.name}");
+        if (currentCheckpoint != null) UnloadScene(currentCheckpoint.gameObject.scene); // Unload the scene of the old checkpoint to avoid memory leaks.
+        currentCheckpoint = newCheckpoint;
+    }
+
+    public void UnloadScene(Scene scene)
+    {
+        Debug.Log($"Unloading scene: {scene.name} with the old check point (Build Index: {scene.buildIndex})");
+        StartCoroutine(UnloadSceneRoutine(scene));
+    }
     #endregion
 
 
@@ -171,17 +182,9 @@ public class LevelManagerScript : MonoBehaviour
         // Move the camera to the CameraPoint of the new active scene.
         MoveCameraToPoint();
 
-        /*
-        // The player is already in position, so we DO NOT teleport them.
-        // We just update the checkpoint to the start of the new area in case they die.
-        GameObject newStartPoint = FindObjectInActiveScene("StartPoint");
-        if (newStartPoint != null)
-        {
-            currentCheckpoint = newStartPoint.transform;
-        }
-        */
         // Unload the part of the world that is now behind the player.
-        if (SceneManager.GetSceneByBuildIndex(levelToUnload).isLoaded)
+        Scene sceneToUnload = SceneManager.GetSceneByBuildIndex(levelToUnload);
+        if (sceneToUnload.isLoaded && sceneToUnload != currentCheckpoint.gameObject.scene)
         {
             yield return SceneManager.UnloadSceneAsync(levelToUnload);
         }
@@ -191,46 +194,86 @@ public class LevelManagerScript : MonoBehaviour
         isLoading = false;
     }
 
-
-    // This new coroutine performs the unload/reload to guarantee a fresh level state.
     private IEnumerator RestartLevelRoutine()
     {
         isLoading = true;
+        Debug.Log("--- SMART RESTART INITIATED ---");
 
-        // Hide the GameOver UI panel.
+        // Hide the GameOver UI.
         if (gameoverScript != null)
         {
-            gameoverScript.RestartGame(); // This just calls gameObject.SetActive(false);
+            gameoverScript.RestartGame();
         }
 
-        // Unload the current, modified level scene.
-        yield return SceneManager.UnloadSceneAsync(currentLevelIndex);
+        // Determine which scene to restart
+        int sceneToRestartIndex;
+        Vector3 respawnPosition;
 
-        // Immediately reload a clean version of the same level scene.
-        yield return SceneManager.LoadSceneAsync(currentLevelIndex, LoadSceneMode.Additive);
+        // Check if a checkpoint has been triggered and is still valid (its scene is loaded).
+        if (currentCheckpoint != null && currentCheckpoint.gameObject.scene.isLoaded)
+        {
+            sceneToRestartIndex = currentCheckpoint.gameObject.scene.buildIndex;
+            respawnPosition = currentCheckpoint.position;
+            Debug.Log($"Restarting at checkpoint in scene {sceneToRestartIndex}");
+        }
+        else
+        {
+            // FALLBACK: If no checkpoint, restart the level the player is currently in.
+            sceneToRestartIndex = currentLevelIndex;
+            // We'll find the start point after the scene reloads.
+            respawnPosition = Vector3.zero; // Temporary value
+            Debug.Log($"No valid checkpoint. Restarting current scene {sceneToRestartIndex}");
+        }
+        // -----------------------------------------
 
-        // Re-assert that this is the active scene.
+        // Unload ALL currently loaded game levels for a clean slate.
+        for (int i = firstLevelBuildIndex; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            if (SceneManager.GetSceneByBuildIndex(i).isLoaded)
+            {
+                yield return SceneManager.UnloadSceneAsync(i);
+            }
+        }
+
+        // Load the correct level that contains our checkpoint.
+        yield return SceneManager.LoadSceneAsync(sceneToRestartIndex, LoadSceneMode.Additive);
+
+        // Pre-load the level that comes after it for seamless transition.
+        if (sceneToRestartIndex + 1 < SceneManager.sceneCountInBuildSettings)
+        {
+            yield return SceneManager.LoadSceneAsync(sceneToRestartIndex + 1, LoadSceneMode.Additive);
+        }
+
+        // Update the game state to reflect the new reality.
+        currentLevelIndex = sceneToRestartIndex;
         SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(currentLevelIndex));
 
-        // Move the camera to the correct position for this freshly loaded scene.
+        // Move camera and player.
         MoveCameraToPoint();
 
-        // Reset the player's state and place them at the level's designated start point.
+        // If we are using the fallback, we need to find the start point now.
+        if (respawnPosition == Vector3.zero)
+        {
+            GameObject startPoint = FindObjectInActiveScene("StartPoint");
+            if (startPoint != null)
+            {
+                respawnPosition = startPoint.transform.position;
+                // Also update the checkpoint to this start point.
+                currentCheckpoint = startPoint.transform;
+            }
+        }
+
+        playerObject.transform.position = respawnPosition;
+
+        // Reset the player's internal state.
         CharacterScript playerScript = playerObject.GetComponent<CharacterScript>();
         if (playerScript != null)
         {
             playerScript.ResetState();
         }
 
-        // Find the start point within the newly loaded active scene.
-        GameObject startPoint = FindObjectInActiveScene("StartPoint");
-        if (startPoint != null)
-        {
-            playerObject.transform.position = startPoint.transform.position;
-            currentCheckpoint = startPoint.transform; // Also reset the checkpoint to the beginning.
-        }
-
         isLoading = false;
+        Debug.Log("--- SMART RESTART COMPLETE ---");
     }
 
     private IEnumerator ReturnToMainMenuRoutine()
@@ -265,6 +308,10 @@ public class LevelManagerScript : MonoBehaviour
         isLoading = false;
     }
 
+    private IEnumerator UnloadSceneRoutine(Scene scene)
+    {
+        yield return SceneManager.UnloadSceneAsync(scene);
+    }
     #endregion
 
     private void MoveCameraToPoint()

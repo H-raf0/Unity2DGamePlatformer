@@ -241,13 +241,13 @@ MonoBehaviour:
   jumpSoundClip: {fileID: 8300000, guid: 7b1946dc864556447ba51fa12ff54ee6, type: 3}
   hitSoundClip: {fileID: 8300000, guid: beccd5928555a4e48a738c89f8b7ff70, type: 3}
   startSoundClip: {fileID: 8300000, guid: b588dc72056a36945a9012b58eb166cb, type: 3}
-  jumpPower: 16
+  jumpPower: 15
   speed: 5
   rotationSpeed: 400
   pushForce: 6
   pushForceY: 8
   deathYPosition: -11
-  groundCheckRadius: 0.2
+  groundCheckRadius: 0.1
   platformRb: {fileID: 0}
   isOnMovingPlatform: 0
 --- !u!114 &1372817279072673538

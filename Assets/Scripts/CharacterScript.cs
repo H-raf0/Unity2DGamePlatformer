@@ -83,10 +83,6 @@ public class CharacterScript : MonoBehaviour
     private void Start()
     {
         gameObject.name = "Main Character";
-        if (SoundFXManagerScript.instance != null)
-        {
-            SoundFXManagerScript.instance.PlaySoundFXClip(startSoundClip, transform, 1f);
-        }
         initGravityScale = rb.gravityScale;
     }
 
@@ -218,11 +214,11 @@ public class CharacterScript : MonoBehaviour
         characterSprite.rotation = Quaternion.identity; // Reset the sprite's rotation
         isFacingRight = true;
 
-        /*  // play a sound or trigger an effect for respawning
+        // play a sound for respawning
         if (SoundFXManagerScript.instance != null)
         {
             SoundFXManagerScript.instance.PlaySoundFXClip(startSoundClip, transform, 1f);
-        }*/
+        }
     }
     #endregion
 

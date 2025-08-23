@@ -6,11 +6,11 @@ public class CheckPointScript : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // When the player touches this checkpoint, tell the LevelManager 
-            // to store THIS transform as the new restart location.
-            LevelManagerScript.instance.currentCheckpoint = this.transform;
+            // Call the dedicated function on the manager to set this as the new checkpoint.
+            LevelManagerScript.instance.SetNewCheckpoint(this.transform);
 
-            Debug.Log("Checkpoint reached!");
+            // To prevent it from triggering repeatedly, you can disable its collider.
+            GetComponent<Collider2D>().enabled = false;
         }
     }
 }
