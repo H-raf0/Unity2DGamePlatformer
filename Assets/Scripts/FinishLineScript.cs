@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
-//using UnityEngine.SceneManagement;
 
 public class FinishLineScript : MonoBehaviour
 {
-    
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))  // Check if the player touched the finish line
-        {   
+    private bool hasFinished = false;
 
-            Debug.Log("You won!");  // Print to console
-            LogicScript.instance.LoadNextLevel();  // Load the next level
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && !hasFinished)
+        {
+            hasFinished = true;
+            Debug.Log("Level Complete! Transitioning...");
+
+            // Optionally disable player movement here if you want
+            // other.GetComponent<CharacterScript>().enabled = false;
+
+            // Tell the LevelManager to handle the transition
+            LevelManagerScript.instance.GoToNextLevel();
         }
     }
 }

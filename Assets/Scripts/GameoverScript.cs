@@ -12,10 +12,13 @@ public class GameoverScript : MonoBehaviour
     }
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        gameObject.SetActive(false);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void MainMenu()
     {
-        SceneManager.LoadScene(0);
+        gameObject.SetActive(false);
+        // still not working
+        //SceneManager.LoadScene(0);
     }
 }

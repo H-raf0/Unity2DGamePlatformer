@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class ObstaclesScript : MonoBehaviour
 {
-
     void Start()
     {
-        SpikeScript[] spikes = GameObject.FindObjectsByType<SpikeScript>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        // only children of THIS GameObject (and their children)
+        SpikeScript[] spikes = GetComponentsInChildren<SpikeScript>();
 
         foreach (SpikeScript spike in spikes)
         {
@@ -13,3 +13,4 @@ public class ObstaclesScript : MonoBehaviour
         }
     }
 }
+

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4646438706074577164}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,12 +41,12 @@ GameObject:
   m_Component:
   - component: {fileID: 5348338982856027236}
   - component: {fileID: 4341264204354094597}
+  - component: {fileID: 8587808197178836045}
   - component: {fileID: 8858978780942126005}
   - component: {fileID: 7500837210742973851}
-  - component: {fileID: 8587808197178836045}
   - component: {fileID: 5264465667523957718}
   - component: {fileID: 1372817279072673538}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: characterP
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -112,7 +112,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 4
   m_Sprite: {fileID: 4495478712733764576, guid: 4caf6cc1f0f360b44bc6d98f124aef1d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -124,6 +124,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &8587808197178836045
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668464370178360147}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3069b3f1e714c66449cdd8b40bcabb07, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!50 &8858978780942126005
 Rigidbody2D:
   serializedVersion: 5
@@ -185,7 +207,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0064525604, y: -0.08066535}
+  m_Offset: {x: -0.0064525604, y: -0.067908406}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -195,30 +217,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.41965485, y: 0.615417}
+  m_Size: {x: 0.41965485, y: 0.5899031}
   m_EdgeRadius: 0
---- !u!95 &8587808197178836045
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2668464370178360147}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3069b3f1e714c66449cdd8b40bcabb07, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &5264465667523957718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,9 +238,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   characterSprite: {fileID: 5348338982856027236}
-  jumpSoundClip: {fileID: 0}
-  hitSoundClip: {fileID: 0}
-  startSoundClip: {fileID: 0}
+  jumpSoundClip: {fileID: 8300000, guid: 7b1946dc864556447ba51fa12ff54ee6, type: 3}
+  hitSoundClip: {fileID: 8300000, guid: beccd5928555a4e48a738c89f8b7ff70, type: 3}
+  startSoundClip: {fileID: 8300000, guid: b588dc72056a36945a9012b58eb166cb, type: 3}
   jumpPower: 21
   speed: 5
   rotationSpeed: 400

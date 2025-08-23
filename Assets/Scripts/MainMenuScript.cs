@@ -6,7 +6,7 @@ public class MainMenuScript : MonoBehaviour
     public void PlayGame()
     {
         // Load the game scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        LevelManagerScript.instance.StartGame();
         Debug.Log("Load Game Scene");
     }
 

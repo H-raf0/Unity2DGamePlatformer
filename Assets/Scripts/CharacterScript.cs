@@ -58,6 +58,7 @@ public class CharacterScript : MonoBehaviour
     private float horizontalInput;
     private bool isFacingRight = true;
     private bool isAlive = true;
+    private float initGravityScale;
 
     // Temporary input script reference
     private PlayerControllerScript playerControllerScript;
@@ -86,6 +87,7 @@ public class CharacterScript : MonoBehaviour
         {
             SoundFXManagerScript.instance.PlaySoundFXClip(startSoundClip, transform, 1f);
         }
+        initGravityScale = rb.gravityScale;
     }
 
     private void Update()
@@ -183,7 +185,7 @@ public class CharacterScript : MonoBehaviour
         isAlive = false;
         Debug.Log("Game Over");
 
-        rb.gravityScale = 2f;
+        rb.gravityScale = initGravityScale;
         GetComponent<Collider2D>().enabled = false;
 
         if (SoundFXManagerScript.instance != null)
@@ -198,10 +200,29 @@ public class CharacterScript : MonoBehaviour
             rb.AddForce(new Vector2(knockbackDirection * pushForce, pushForceY), ForceMode2D.Impulse);
         }
 
-        if (LogicScript.instance != null)
+        if (LevelManagerScript.instance != null)
         {
-            LogicScript.instance.GameOver();
+            LevelManagerScript.instance.GameOver();
         }
+    }
+    #endregion
+
+    #region Public Methods
+    // This new method will be called by the LevelManager to reset the player's state.
+    public void ResetState()
+    {
+        isAlive = true;
+        GetComponent<Collider2D>().enabled = true; // Re-enable the collider
+        rb.gravityScale = initGravityScale;
+        rb.linearVelocity = Vector2.zero; // Stop any residual movement
+        characterSprite.rotation = Quaternion.identity; // Reset the sprite's rotation
+        isFacingRight = true;
+
+        /*  // play a sound or trigger an effect for respawning
+        if (SoundFXManagerScript.instance != null)
+        {
+            SoundFXManagerScript.instance.PlaySoundFXClip(startSoundClip, transform, 1f);
+        }*/
     }
     #endregion
 

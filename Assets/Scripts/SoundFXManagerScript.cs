@@ -4,34 +4,32 @@ public class SoundFXManagerScript : MonoBehaviour
 {
     public static SoundFXManagerScript instance;
 
-    private AudioSource soundFXObject;
+    [SerializeField] private AudioSource soundFXObjectPrefab;
 
     private void Awake()
     {
+        // Singleton Pattern
         if (instance == null)
         {
-            instance = this;    
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        soundFXObject = GetComponent<AudioSource>();
+        else
+        {
+            Destroy(gameObject); // Destroy any duplicates
+        }
     }
+
     public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume)
     {
-        // sapwn in gameObject
-        AudioSource audioSource = Instantiate(soundFXObject, spawnTransform.position, Quaternion.identity);
+        // Spawn a new AudioSource from the prefab at the desired position
+        AudioSource audioSource = Instantiate(soundFXObjectPrefab, spawnTransform.position, Quaternion.identity);
 
-        // assign audioClip
         audioSource.clip = audioClip;
-
-        // assign volume
         audioSource.volume = volume;
-
-        // play sound
         audioSource.Play();
 
-        // get length of sound FX clip
-        float clipLength = audioSource.clip.length;
-
-        // destroy gameObject after clip length
-        Destroy(audioSource.gameObject, clipLength);
+        // Destroy the temporary sound object after the clip has finished playing
+        Destroy(audioSource.gameObject, audioSource.clip.length);
     }
 }

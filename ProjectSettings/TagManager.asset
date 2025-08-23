@@ -7,6 +7,8 @@ TagManager:
   - Logic
   - Obstacle
   - Platform
+  - CameraPoint
+  - StartPoint
   layers:
   - Default
   - TransparentFX
