@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-// This attribute ensures the GameObject will always have these components,
-// preventing NullReferenceExceptions if you forget to add them.
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class CharacterScript : MonoBehaviour
 {
@@ -32,6 +30,8 @@ public class CharacterScript : MonoBehaviour
     [SerializeField] private float jumpPower = 21f;
     [Tooltip("The character's horizontal movement speed.")]
     [SerializeField] private float speed = 5f;
+    [Tooltip("A small cooldown to prevent jump spamming and glitches.")]
+    [SerializeField] private float jumpCooldown = 0.1f;
     [Tooltip("How fast the character's sprite rotates upon death.")]
     [SerializeField] private float rotationSpeed = 400f;
     [Tooltip("The horizontal force applied when hitting an obstacle.")]
@@ -49,9 +49,9 @@ public class CharacterScript : MonoBehaviour
     #endregion
 
     #region Moving Platform support
-    [Header("Moving Platform support")]
-    public Rigidbody2D platformRb;
-    public bool isOnMovingPlatform = false;
+    // We go back to this method of tracking the platform
+    private Rigidbody2D platformRb;
+    private bool isOnMovingPlatform = false;
     #endregion
 
     // Private state variables
@@ -59,25 +59,16 @@ public class CharacterScript : MonoBehaviour
     private bool isFacingRight = true;
     private bool isAlive = true;
     private float initGravityScale;
+    private float lastJumpTime = -1f;
 
-    // Temporary input script reference
     private PlayerControllerScript playerControllerScript;
 
-    
-
     #region Unity Lifecycle Methods
-    // Awake is called before the first frame update. Best for initializing components.
     private void Awake()
     {
         if (myAnimator == null) myAnimator = GetComponent<Animator>();
         if (rb == null) rb = GetComponent<Rigidbody2D>();
-
-        // We also get the player controller script here for robustness.
         playerControllerScript = GetComponent<PlayerControllerScript>();
-        if (playerControllerScript == null)
-        {
-            Debug.LogWarning("PlayerControllerScript not found on the character. Input from that script will not work.");
-        }
     }
 
     private void Start()
@@ -94,8 +85,7 @@ public class CharacterScript : MonoBehaviour
             return;
         }
 
-        // --- TEMPORARY INPUT HANDLING ---
-        // Gathers input from keyboard keys and the external PlayerControllerScript.
+        // --- Input Handling ---
         if (Input.GetKey(KeyCode.D) || (playerControllerScript != null && playerControllerScript.moveRight))
         {
             horizontalInput = 1;
@@ -109,39 +99,38 @@ public class CharacterScript : MonoBehaviour
             horizontalInput = 0;
         }
 
-        if ((Input.GetButtonDown("Jump") || (playerControllerScript != null && playerControllerScript.jump)) && IsGrounded())
+        if ((Input.GetButtonDown("Jump") || (playerControllerScript != null && playerControllerScript.jump)))
         {
-            Jump();
+            if (Time.time >= lastJumpTime + jumpCooldown && IsGrounded())
+            {
+                Jump();
+            }
         }
-        // --- END TEMPORARY INPUT ---
 
         if (transform.position.y <= deathYPosition)
         {
-            Die(false); // Die from falling, no knockback needed.
+            Die(false);
         }
 
         Flip();
     }
 
-    // FixedUpdate is the best place for physics calculations.
+    // --- REVISED FIXEDUPDATE ---
     private void FixedUpdate()
     {
         if (!isAlive) return;
 
-        // Start with the player's intended velocity based on input and current gravity.
+        // Calculate the player's intended velocity based on input.
         Vector2 playerVelocity = new Vector2(horizontalInput * speed, rb.linearVelocity.y);
 
-        // If on a moving platform, add its velocity to the player.
+        // If on a moving platform, add the platform's velocity.
+        // This makes the player "stick" to the platform and inherit its movement naturally.
         if (isOnMovingPlatform && platformRb != null)
         {
-            // Add the platform's horizontal and vertical velocity.
-            // This makes the player move left/right and up/down with the platform.
-            Vector2 v = platformRb.linearVelocity;
-            v.y = v.y > 0 ? v.y * -1.0f : 0; // Invert vertical velocity if moving up.
-            playerVelocity += v;
-
+            playerVelocity.x += platformRb.linearVelocity.x;
         }
 
+        // 3. Apply the final calculated velocity.
         rb.linearVelocity = playerVelocity;
 
         myAnimator.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));
@@ -149,15 +138,14 @@ public class CharacterScript : MonoBehaviour
     #endregion
 
     #region Character Actions
+
+    // --- REVISED JUMP ---
     private void Jump()
     {
-        float verticalVelocity = rb.linearVelocity.y;
-        if (isOnMovingPlatform && platformRb != null && platformRb.linearVelocity.y>0)
-        {
-            verticalVelocity += platformRb.linearVelocity.y;
-        }
+        if (isOnMovingPlatform) rb.gravityScale = initGravityScale;
+        lastJumpTime = Time.time;
 
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, verticalVelocity + jumpPower);
+        rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
 
         if (SoundFXManagerScript.instance != null)
         {
@@ -180,6 +168,9 @@ public class CharacterScript : MonoBehaviour
 
         isAlive = false;
         Debug.Log("Game Over");
+
+        isOnMovingPlatform = false;
+        platformRb = null;
 
         rb.gravityScale = initGravityScale;
         GetComponent<Collider2D>().enabled = false;
@@ -204,17 +195,18 @@ public class CharacterScript : MonoBehaviour
     #endregion
 
     #region Public Methods
-    // This new method will be called by the LevelManager to reset the player's state.
     public void ResetState()
     {
         isAlive = true;
-        GetComponent<Collider2D>().enabled = true; // Re-enable the collider
+        GetComponent<Collider2D>().enabled = true;
         rb.gravityScale = initGravityScale;
-        rb.linearVelocity = Vector2.zero; // Stop any residual movement
-        characterSprite.rotation = Quaternion.identity; // Reset the sprite's rotation
+        rb.linearVelocity = Vector2.zero;
+        characterSprite.rotation = Quaternion.identity;
         isFacingRight = true;
 
-        // play a sound for respawning
+        isOnMovingPlatform = false;
+        platformRb = null;
+
         if (SoundFXManagerScript.instance != null)
         {
             SoundFXManagerScript.instance.PlaySoundFXClip(startSoundClip, transform, 1f);
@@ -236,11 +228,19 @@ public class CharacterScript : MonoBehaviour
             return;
         }
 
-        // Check the main object for the "Platform" tag.
         if (collision.gameObject.CompareTag("Platform"))
         {
-            isOnMovingPlatform = true;
-            platformRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            // By checking the contact points, we ensure we only attach to the platform when landing ON TOP of it.
+            foreach (ContactPoint2D contact in collision.contacts)
+            {
+                if (contact.normal.y > 0.5f) // The collision is from below the player
+                {
+                    isOnMovingPlatform = true;
+                    rb.gravityScale = 20f; // Temporarily increase gravity to ensure the player sticks to the platform
+                    platformRb = collision.gameObject.GetComponent<Rigidbody2D>();
+                    break;
+                }
+            }
         }
     }
 
@@ -248,6 +248,7 @@ public class CharacterScript : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Platform"))
         {
+            rb.gravityScale = initGravityScale;
             isOnMovingPlatform = false;
             platformRb = null;
         }

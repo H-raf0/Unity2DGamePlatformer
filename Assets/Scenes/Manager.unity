@@ -543,10 +543,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 5264465667523957718, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
-      propertyPath: groundCheckRadius
-      value: 0.2
-      objectReference: {fileID: 0}
     - target: {fileID: 5348338982856027236, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -17
@@ -667,44 +663,23 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3189903209767900280, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4616079552249894726, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
       propertyPath: m_Name
       value: SoundFXManager
       objectReference: {fileID: 0}
-    - target: {fileID: 4616079552249894726, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
-      propertyPath: m_IsActive
+    - target: {fileID: 8015713690483362275, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
+      propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8015713690483362275, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
+      propertyPath: soundFXObjectPrefab
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4616079552249894726, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1729784593}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
---- !u!1 &1729784592 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4616079552249894726, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
-  m_PrefabInstance: {fileID: 1729784591}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1729784593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1729784592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 277755d5a76459e4bbd299bc63018e21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soundFXObjectPrefab: {fileID: 3189903209767900280, guid: 3f05b58751912f443b93740608d90ae0, type: 3}
 --- !u!1001 &2021414194
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -716,10 +691,6 @@ PrefabInstance:
     - target: {fileID: 1480395300250371814, guid: 04ae188e9753286489daf1e42cdd7a99, type: 3}
       propertyPath: m_Name
       value: MusicManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 4219265072206615931, guid: 04ae188e9753286489daf1e42cdd7a99, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4438254418492916781, guid: 04ae188e9753286489daf1e42cdd7a99, type: 3}
       propertyPath: m_LocalPosition.x

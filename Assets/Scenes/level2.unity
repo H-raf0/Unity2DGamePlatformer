@@ -690,6 +690,18 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 2067137977324020926, guid: abee9bf04ec5b654dad580e6894079a8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4223423511874067882, guid: abee9bf04ec5b654dad580e6894079a8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4223423511874067882, guid: abee9bf04ec5b654dad580e6894079a8, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4283550722312008731, guid: abee9bf04ec5b654dad580e6894079a8, type: 3}
       propertyPath: m_Name
       value: MovingPlatform2
@@ -856,11 +868,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 592252833984343756, guid: e6f5ae236c300e74ebe4f03e2b540b2a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21
+      value: -20.5
       objectReference: {fileID: 0}
     - target: {fileID: 592252833984343756, guid: e6f5ae236c300e74ebe4f03e2b540b2a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.486
+      value: -3.497
       objectReference: {fileID: 0}
     - target: {fileID: 592252833984343756, guid: e6f5ae236c300e74ebe4f03e2b540b2a, type: 3}
       propertyPath: m_LocalPosition.z
