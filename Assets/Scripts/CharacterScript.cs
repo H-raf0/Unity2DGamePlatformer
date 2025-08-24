@@ -32,6 +32,8 @@ public class CharacterScript : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [Tooltip("A small cooldown to prevent jump spamming and glitches.")]
     [SerializeField] private float jumpCooldown = 0.1f;
+    [Tooltip("How much to reduce upward velocity when the jump button is released early.")]
+    [SerializeField] private float jumpCutMultiplier = 0.5f;
     [Tooltip("How fast the character's sprite rotates upon death.")]
     [SerializeField] private float rotationSpeed = 400f;
     [Tooltip("The horizontal force applied when hitting an obstacle.")]
@@ -107,6 +109,15 @@ public class CharacterScript : MonoBehaviour
             }
         }
 
+        if (Input.GetButtonUp("Jump")) // || !playerControllerScript.jump) // consition for the ui button, do not delete for now
+        {
+            // If we are moving upwards, cut the velocity.
+            if (rb.linearVelocity.y > 0)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
+            }
+        }
+
         if (transform.position.y <= deathYPosition)
         {
             Die(false);
@@ -115,7 +126,6 @@ public class CharacterScript : MonoBehaviour
         Flip();
     }
 
-    // --- REVISED FIXEDUPDATE ---
     private void FixedUpdate()
     {
         if (!isAlive) return;
@@ -123,8 +133,7 @@ public class CharacterScript : MonoBehaviour
         // Calculate the player's intended velocity based on input.
         Vector2 playerVelocity = new Vector2(horizontalInput * speed, rb.linearVelocity.y);
 
-        // If on a moving platform, add the platform's velocity.
-        // This makes the player "stick" to the platform and inherit its movement naturally.
+        // move the player with the horizontal movement of the platform to simulate sticking to it
         if (isOnMovingPlatform && platformRb != null)
         {
             playerVelocity.x += platformRb.linearVelocity.x;
@@ -139,7 +148,6 @@ public class CharacterScript : MonoBehaviour
 
     #region Character Actions
 
-    // --- REVISED JUMP ---
     private void Jump()
     {
         if (isOnMovingPlatform) rb.gravityScale = initGravityScale;
