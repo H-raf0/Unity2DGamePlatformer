@@ -32,6 +32,8 @@ public class CharacterScript : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [Tooltip("A small cooldown to prevent jump spamming and glitches.")]
     [SerializeField] private float jumpCooldown = 0.1f;
+    [Tooltip("enable or disable the jumping cut")]
+    [SerializeField] private bool jumpCutEnabled = false;
     [Tooltip("How much to reduce upward velocity when the jump button is released early.")]
     [SerializeField] private float jumpCutMultiplier = 0.5f;
     [Tooltip("How fast the character's sprite rotates upon death.")]
@@ -109,7 +111,7 @@ public class CharacterScript : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonUp("Jump")) // || !playerControllerScript.jump) // consition for the ui button, do not delete for now
+        if (jumpCutEnabled && Input.GetButtonUp("Jump")) // || !playerControllerScript.jump) // consition for the ui button, do not delete for now
         {
             // If we are moving upwards, cut the velocity.
             if (rb.linearVelocity.y > 0)
@@ -139,7 +141,7 @@ public class CharacterScript : MonoBehaviour
             playerVelocity.x += platformRb.linearVelocity.x;
         }
 
-        // 3. Apply the final calculated velocity.
+        // Apply the final calculated velocity.
         rb.linearVelocity = playerVelocity;
 
         myAnimator.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));

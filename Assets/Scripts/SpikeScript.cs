@@ -3,14 +3,17 @@ using System.Collections;
 
 public class SpikeScript : MonoBehaviour
 {
+    [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;  // Higher = faster (duration ≈ 1 / moveSpeed)
-    private bool hasMoved = false;                  // Prevent multiple triggers
-    private float multiplier = 1f;                  // Travel distance in "direction" units
-    private Vector2 direction;
 
     [Header("Grouping")]
     public int groupID = 0; // Spikes with the same groupID trigger together
+    [Header("Enable/disable the trigger")]
+    public bool canTrigger = true;
 
+    private bool hasMoved = false;                  // Prevent multiple triggers
+    private float multiplier = 1f;                  // Travel distance in "direction" units
+    private Vector2 direction;
     // Activates all spikes that share this spike's groupID.
     private void ActivateGroup()
     {
@@ -86,16 +89,19 @@ public class SpikeScript : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && !hasMoved)
+        if (canTrigger)
         {
-            // When one is hit, activate the whole group.
-            if (this.groupID != 0)
+            if (other.CompareTag("Player") && !hasMoved)
             {
-                ActivateGroup();
-            }
-            else
-            {
-                ActivateFromGroup(); // If groupID is 0, this spike is not in a group.
+                // When one is hit, activate the whole group.
+                if (this.groupID != 0)
+                {
+                    ActivateGroup();
+                }
+                else
+                {
+                    ActivateFromGroup(); // If groupID is 0, this spike is not in a group.
+                }
             }
         }
     }

@@ -244,7 +244,8 @@ MonoBehaviour:
   jumpPower: 15
   speed: 5
   jumpCooldown: 0.1
-  jumpCutMultiplier: 0.6
+  jumpCutEnabled: 0
+  jumpCutMultiplier: 0.65
   rotationSpeed: 400
   pushForce: 6
   pushForceY: 8
