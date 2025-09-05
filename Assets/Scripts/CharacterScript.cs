@@ -39,7 +39,7 @@ public class CharacterScript : MonoBehaviour
     [Tooltip("How fast the character's sprite rotates upon death.")]
     [SerializeField] private float rotationSpeed = 400f;
     [Tooltip("The horizontal force applied when hitting an obstacle.")]
-    [SerializeField] private float pushForce = 6f;
+    [SerializeField] private float pushForceX = 6f;
     [Tooltip("The vertical force applied when hitting an obstacle.")]
     [SerializeField] private float pushForceY = 8f;
     [Tooltip("The Y position below which the character is considered dead.")]
@@ -60,10 +60,13 @@ public class CharacterScript : MonoBehaviour
 
     // Private state variables
     private float horizontalInput;
-    private bool isFacingRight = true;
-    private bool isAlive = true;
     private float initGravityScale;
     private float lastJumpTime = -1f;
+    private bool isFacingRight = true;
+    private bool isAlive = true;
+    private float knockbackEndTime = 0f;
+    private bool isKnockedBack = false;
+    
 
     private PlayerControllerScript playerControllerScript;
 
@@ -83,9 +86,20 @@ public class CharacterScript : MonoBehaviour
 
     private void Update()
     {
+
+        if (isKnockedBack && Time.time < knockbackEndTime)
+        {
+            if (!isAlive)
+            {
+                characterSprite.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
+            }
+            // If we are in a knockback state, do nothing else in Update.
+            return;
+        }
+        isKnockedBack = false; // Once the timer is up, reset the state.
+
         if (!isAlive)
         {
-            characterSprite.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
             return;
         }
 
@@ -130,6 +144,13 @@ public class CharacterScript : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        if (isKnockedBack)
+        {
+            // If we are in a knockback state, do not apply player-controlled movement.
+            return;
+        }
+
         if (!isAlive) return;
 
         // Calculate the player's intended velocity based on input.
@@ -176,6 +197,14 @@ public class CharacterScript : MonoBehaviour
     {
         if (!isAlive) return;
 
+        if (applyKnockback)
+        {
+            rb.linearVelocity = Vector2.zero; // Reset velocity first for a snappy feel
+            float knockbackDirection = isFacingRight ? -1 : 1;
+            Vector2 force = new Vector2(knockbackDirection * pushForceX, pushForceY);
+            ApplyKnockback(force, 20f);
+        }
+
         isAlive = false;
         Debug.Log("Game Over");
 
@@ -190,13 +219,6 @@ public class CharacterScript : MonoBehaviour
             SoundFXManagerScript.instance.PlaySoundFXClip(hitSoundClip, transform, 1f);
         }
 
-        if (applyKnockback)
-        {
-            float knockbackDirection = isFacingRight ? -1 : 1;
-            rb.linearVelocity = Vector2.zero;
-            rb.AddForce(new Vector2(knockbackDirection * pushForce, pushForceY), ForceMode2D.Impulse);
-        }
-
         if (LevelManagerScript.instance != null)
         {
             LevelManagerScript.instance.GameOver();
@@ -205,6 +227,20 @@ public class CharacterScript : MonoBehaviour
     #endregion
 
     #region Public Methods
+
+    public void ApplyKnockback(Vector2 force, float duration)
+    {
+        if (!isAlive) return;
+
+        // Set the state
+        isKnockedBack = true;
+        knockbackEndTime = Time.time + duration;
+
+        // Apply the force
+        rb.linearVelocity = Vector2.zero; // Reset velocity first for a snappy feel
+        rb.AddForce(force, ForceMode2D.Impulse);
+    }
+
     public void ResetState()
     {
         isAlive = true;
@@ -213,6 +249,7 @@ public class CharacterScript : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         characterSprite.rotation = Quaternion.identity;
         isFacingRight = true;
+        isKnockedBack = false;
 
         isOnMovingPlatform = false;
         platformRb = null;
@@ -253,6 +290,7 @@ public class CharacterScript : MonoBehaviour
             }
         }
     }
+
 
     private void OnCollisionExit2D(Collision2D collision)
     {

@@ -12,7 +12,7 @@ public class SpikeScript : MonoBehaviour
     public bool canTrigger = true;
 
     private bool hasMoved = false;                  // Prevent multiple triggers
-    private float multiplier = 1f;                  // Travel distance in "direction" units
+    private float multiplier = 1f;                  // Travel distance in "axeDirection" units
     private Vector2 direction;
     // Activates all spikes that share this spike's groupID.
     private void ActivateGroup()
@@ -57,7 +57,7 @@ public class SpikeScript : MonoBehaviour
     {
         Vector2 startPosition = transform.localPosition;
 
-        // Robust direction: snap Z to nearest 90 degrees (0, 90, 180, 270).
+        // Robust axeDirection: snap Z to nearest 90 degrees (0, 90, 180, 270).
         float z = Mathf.Round(transform.localEulerAngles.z);
 
         switch (z)

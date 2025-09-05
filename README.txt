@@ -8,3 +8,6 @@
 159
 
 stick mapp dancing and throwing random ****
+
+
+// platform <---> animation on, probably because animation is based on velocity which is given by the platform pffffff

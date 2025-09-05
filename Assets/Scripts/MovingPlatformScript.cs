@@ -84,7 +84,7 @@ public class MovingPlatformScript : MonoBehaviour
 
     private void CalculateDirection()
     {
-        // Calculate the direction to move towards the current target
+        // Calculate the axeDirection to move towards the current target
         moveDirection = (currentTarget - transform.position).normalized;
     }
 
