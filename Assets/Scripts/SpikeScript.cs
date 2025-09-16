@@ -6,14 +6,27 @@ public class SpikeScript : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;  // Higher = faster (duration ≈ 1 / moveSpeed)
 
+    
+    public enum SpikeDirection
+    {
+        Forward,    // Uses transform.forward (default)
+        Left,       // Vector2.left
+        Right,      // Vector2.right
+        Up,         // Vector2.up
+        Down        // Vector2.down
+    }
+    [Header("Direction")]
+    [SerializeField] private SpikeDirection spikeDirection = SpikeDirection.Forward;
+
     [Header("Grouping")]
     public int groupID = 0; // Spikes with the same groupID trigger together
     [Header("Enable/disable the trigger")]
     public bool canTrigger = true;
 
     private bool hasMoved = false;                  // Prevent multiple triggers
-    private float multiplier = 1f;                  // Travel distance in "axeDirection" units
+    private float multiplier = 1f;                  // Travel distance in "direction" units
     private Vector2 direction;
+
     // Activates all spikes that share this spike's groupID.
     private void ActivateGroup()
     {
@@ -53,25 +66,47 @@ public class SpikeScript : MonoBehaviour
         // Start the movement for this spike.
         StartCoroutine(MoveSpike());
     }
+
     private IEnumerator MoveSpike()
     {
         Vector2 startPosition = transform.localPosition;
 
-        // Robust axeDirection: snap Z to nearest 90 degrees (0, 90, 180, 270).
-        float z = Mathf.Round(transform.localEulerAngles.z);
-
-        switch (z)
+        // Determine direction based on the selected enum value
+        switch (spikeDirection)
         {
-            case 0: direction = Vector2.left; break;
-            case 90: direction = Vector2.down; break;
-            case 180: direction = Vector2.right; break;
-            case 270: direction = Vector2.up; break;
+            case SpikeDirection.Forward:
+                // Use rotation-based direction like original code
+                float z = Mathf.Round(transform.localEulerAngles.z);
+                switch (z)
+                {
+                    case 0: direction = Vector2.left; break;
+                    case 90: direction = Vector2.down; break;
+                    case 180: direction = Vector2.right; break;
+                    case 270: direction = Vector2.up; break;
+                    default:
+                        Debug.Log("Unexpected rotation value: " + z + " on " + name);
+                        direction = Vector2.left; // Fallback to left
+                        break;
+                }
+                break;
+            case SpikeDirection.Left:
+                direction = Vector2.left;
+                break;
+            case SpikeDirection.Right:
+                direction = Vector2.right;
+                break;
+            case SpikeDirection.Up:
+                direction = Vector2.up;
+                break;
+            case SpikeDirection.Down:
+                direction = Vector2.down;
+                break;
             default:
-                Debug.Log("error in rotation value");
+                direction = Vector2.left; // Fallback
                 break;
         }
 
-        Debug.Log($"[{name}] Z:{z:F2}, dir:{direction}");
+        Debug.Log($"[{name}] Direction: {spikeDirection}, Vector: {direction}");
 
         Vector2 targetPosition = startPosition + direction * multiplier;
 

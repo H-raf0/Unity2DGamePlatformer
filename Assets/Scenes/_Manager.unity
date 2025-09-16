@@ -593,6 +593,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5264465667523957718, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
+      propertyPath: jumpCooldown
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264465667523957718, guid: 12c9999821f86394d90a4a28219fa5c6, type: 3}
       propertyPath: jumpCutEnabled
       value: 0
       objectReference: {fileID: 0}
