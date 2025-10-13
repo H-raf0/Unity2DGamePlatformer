@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections; // Needed for Coroutines
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class CharacterScript : MonoBehaviour
@@ -44,6 +45,8 @@ public class CharacterScript : MonoBehaviour
     [SerializeField] private float pushForceY = 8f;
     [Tooltip("The Y position below which the character is considered dead.")]
     [SerializeField] private float deathYPosition = -11f;
+    [Tooltip("The default gravity scale for the player.")]
+    [SerializeField] private float defaultGravityScale = 3f; // New: Explicit default gravity
     #endregion
 
     #region Ground Check Settings
@@ -53,20 +56,18 @@ public class CharacterScript : MonoBehaviour
     #endregion
 
     #region Moving Platform support
-    // We go back to this method of tracking the platform
     private Rigidbody2D platformRb;
     private bool isOnMovingPlatform = false;
     #endregion
 
     // Private state variables
     private float horizontalInput;
-    private float initGravityScale;
     private float lastJumpTime = -1f;
     private bool isFacingRight = true;
     private bool isAlive = true;
     private float knockbackEndTime = 0f;
     private bool isKnockedBack = false;
-    
+    private bool wasJumpingLastFrame = false; // Track jump state for mobile
 
     private PlayerControllerScript playerControllerScript;
 
@@ -76,27 +77,43 @@ public class CharacterScript : MonoBehaviour
         if (myAnimator == null) myAnimator = GetComponent<Animator>();
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         playerControllerScript = GetComponent<PlayerControllerScript>();
+
+        // Ensure default gravity is set if it's not set in the inspector.
+        // This is a more robust way to initialize than relying on Start, which might run later.
+        if (rb.gravityScale <= 0.01f) // Check for near-zero to catch accidental small values
+        {
+            rb.gravityScale = defaultGravityScale;
+        }
     }
 
     private void Start()
     {
         gameObject.name = "Main Character";
-        initGravityScale = rb.gravityScale;
+        // initGravityScale is now `defaultGravityScale` if not explicitly set in Awake.
+        // Ensure gravity is active from the start, using the robust default.
+        rb.gravityScale = defaultGravityScale;
     }
 
     private void Update()
     {
+        // Handle knockback rotation here in Update as it's visual.
+        if (!isAlive && isKnockedBack) // Only rotate if dead AND knocked back
+        {
+            characterSprite.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
+        }
 
         if (isKnockedBack && Time.time < knockbackEndTime)
         {
-            if (!isAlive)
-            {
-                characterSprite.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
-            }
-            // If we are in a knockback state, do nothing else in Update.
-            return;
+            return; // Block other actions while knocked back
         }
-        isKnockedBack = false; // Once the timer is up, reset the state.
+        else if (isKnockedBack && Time.time >= knockbackEndTime)
+        {
+            // Knockback duration ended
+            isKnockedBack = false;
+            rb.linearVelocity = Vector2.zero; // Stop any residual knockback velocity
+            rb.gravityScale = defaultGravityScale; // Ensure gravity is back to normal
+        }
+
 
         if (!isAlive)
         {
@@ -104,11 +121,36 @@ public class CharacterScript : MonoBehaviour
         }
 
         // --- Input Handling ---
-        if (Input.GetKey(KeyCode.D) || (playerControllerScript != null && playerControllerScript.moveRight))
+        HandleInput();
+
+        // --- Jump Cut Logic (Fixed for Mobile) ---
+        HandleJumpCut();
+
+        if (transform.position.y <= deathYPosition)
+        {
+            Die(false); // Die without knockback if falling off the map
+        }
+
+        Flip();
+    }
+
+    private void HandleInput()
+    {
+        // Horizontal Input
+        // Prioritize PC input if available, otherwise use mobile input.
+        if (Input.GetKey(KeyCode.D))
         {
             horizontalInput = 1;
         }
-        else if (Input.GetKey(KeyCode.A) || (playerControllerScript != null && playerControllerScript.moveLeft))
+        else if (Input.GetKey(KeyCode.A))
+        {
+            horizontalInput = -1;
+        }
+        else if (playerControllerScript != null && playerControllerScript.moveRight)
+        {
+            horizontalInput = 1;
+        }
+        else if (playerControllerScript != null && playerControllerScript.moveLeft)
         {
             horizontalInput = -1;
         }
@@ -117,7 +159,11 @@ public class CharacterScript : MonoBehaviour
             horizontalInput = 0;
         }
 
-        if ((Input.GetButtonDown("Jump") || (playerControllerScript != null && playerControllerScript.jump)))
+        // Jump Input
+        bool jumpPressedThisFrame = Input.GetButtonDown("Jump") ||
+                                    (playerControllerScript != null && playerControllerScript.jump && !wasJumpingLastFrame);
+
+        if (jumpPressedThisFrame)
         {
             if (Time.time >= lastJumpTime + jumpCooldown && IsGrounded())
             {
@@ -125,40 +171,35 @@ public class CharacterScript : MonoBehaviour
             }
         }
 
-        if (jumpCutEnabled && Input.GetButtonUp("Jump")) // || !playerControllerScript.jump) // consition for the ui button, do not delete for now
-        {
-            // If we are moving upwards, cut the velocity.
-            if (rb.linearVelocity.y > 0)
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
-            }
-        }
+        // Update jump state tracking for mobile (important for jump cut and single-tap detection)
+        wasJumpingLastFrame = playerControllerScript != null && playerControllerScript.jump;
+    }
 
-        if (transform.position.y <= deathYPosition)
-        {
-            Die(false);
-        }
+    private void HandleJumpCut()
+    {
+        if (!jumpCutEnabled) return;
 
-        Flip();
+        bool jumpReleasedThisFrame = Input.GetButtonUp("Jump") ||
+                                     (playerControllerScript != null && wasJumpingLastFrame && !playerControllerScript.jump);
+
+        if (jumpReleasedThisFrame && rb.linearVelocity.y > 0)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
+        }
     }
 
     private void FixedUpdate()
     {
-
-        if (isKnockedBack)
-        {
-            // If we are in a knockback state, do not apply player-controlled movement.
-            return;
-        }
-
-        if (!isAlive) return;
+        if (isKnockedBack || !isAlive) return; // Block movement if knocked back or dead
 
         // Calculate the player's intended velocity based on input.
         Vector2 playerVelocity = new Vector2(horizontalInput * speed, rb.linearVelocity.y);
 
-        // move the player with the horizontal movement of the platform to simulate sticking to it
+        // Move with platform
         if (isOnMovingPlatform && platformRb != null)
         {
+            // Only add platform velocity if the player is actively moving horizontally or standing still.
+            // This prevents the platform from dragging the player too much when they're trying to move against it.
             playerVelocity.x += platformRb.linearVelocity.x;
         }
 
@@ -173,8 +214,11 @@ public class CharacterScript : MonoBehaviour
 
     private void Jump()
     {
-        if (isOnMovingPlatform) rb.gravityScale = initGravityScale;
         lastJumpTime = Time.time;
+
+        // Ensure gravity is reset to default when jumping off a platform
+        // The high gravity on platforms might interfere with jump physics.
+        rb.gravityScale = defaultGravityScale;
 
         rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
 
@@ -197,22 +241,31 @@ public class CharacterScript : MonoBehaviour
     {
         if (!isAlive) return;
 
-        if (applyKnockback)
-        {
-            rb.linearVelocity = Vector2.zero; // Reset velocity first for a snappy feel
-            float knockbackDirection = isFacingRight ? -1 : 1;
-            Vector2 force = new Vector2(knockbackDirection * pushForceX, pushForceY);
-            ApplyKnockback(force, 20f);
-        }
-
         isAlive = false;
         Debug.Log("Game Over");
 
+        // Reset platform states
         isOnMovingPlatform = false;
         platformRb = null;
 
-        rb.gravityScale = initGravityScale;
+        // Disable collider immediately to prevent further collision triggers
         GetComponent<Collider2D>().enabled = false;
+
+        // Apply knockback if specified
+        if (applyKnockback)
+        {
+            rb.linearVelocity = Vector2.zero; // Clear current velocity before applying force
+            float knockbackDirection = isFacingRight ? -1 : 1;
+            Vector2 force = new Vector2(knockbackDirection * pushForceX, pushForceY);
+            ApplyKnockback(force, 20f); // Use knockbackDuration for death knockback
+            Debug.Log("Knockback applied on death");
+        }
+        else
+        {
+            // If no knockback, just ensure gravity is normal so player falls
+            rb.linearVelocity = Vector2.zero; // Stop horizontal movement
+            rb.gravityScale = defaultGravityScale; // Ensure falling naturally
+        }
 
         if (SoundFXManagerScript.instance != null)
         {
@@ -230,26 +283,26 @@ public class CharacterScript : MonoBehaviour
 
     public void ApplyKnockback(Vector2 force, float duration)
     {
-        if (!isAlive) return;
-
-        // Set the state
         isKnockedBack = true;
         knockbackEndTime = Time.time + duration;
 
-        // Apply the force
-        rb.linearVelocity = Vector2.zero; // Reset velocity first for a snappy feel
+        rb.linearVelocity = Vector2.zero; // Clear current velocity
         rb.AddForce(force, ForceMode2D.Impulse);
+
+        // Temporarily ensure gravity is active during knockback to prevent floating
+        rb.gravityScale = defaultGravityScale;
     }
 
     public void ResetState()
     {
         isAlive = true;
         GetComponent<Collider2D>().enabled = true;
-        rb.gravityScale = initGravityScale;
+        rb.gravityScale = defaultGravityScale; // Ensure gravity is always reset to default
         rb.linearVelocity = Vector2.zero;
         characterSprite.rotation = Quaternion.identity;
         isFacingRight = true;
         isKnockedBack = false;
+        wasJumpingLastFrame = false;
 
         isOnMovingPlatform = false;
         platformRb = null;
@@ -271,19 +324,21 @@ public class CharacterScript : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<DamageZoneScript>() != null)
         {
-            Die(true);
+            Die(true); // Die with knockback if hitting a damage zone
             return;
         }
 
         if (collision.gameObject.CompareTag("Platform"))
         {
-            // By checking the contact points, we ensure we only attach to the platform when landing ON TOP of it.
             foreach (ContactPoint2D contact in collision.contacts)
             {
-                if (contact.normal.y > 0.5f) // The collision is from below the player
+                // Only consider it a "moving platform" if we land on top.
+                if (contact.normal.y > 0.5f) // Normal pointing up, meaning we landed on it
                 {
                     isOnMovingPlatform = true;
-                    rb.gravityScale = 20f; // Temporarily increase gravity to ensure the player sticks to the platform
+                    // Significantly increased gravity to stick player to platform.
+                    // This is a common technique, but we MUST ensure it's reset.
+                    rb.gravityScale = 20f;
                     platformRb = collision.gameObject.GetComponent<Rigidbody2D>();
                     break;
                 }
@@ -291,14 +346,24 @@ public class CharacterScript : MonoBehaviour
         }
     }
 
-
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Platform"))
         {
-            rb.gravityScale = initGravityScale;
+            // Crucial: Reset gravity to the default when leaving the platform.
+            rb.gravityScale = defaultGravityScale;
             isOnMovingPlatform = false;
             platformRb = null;
+        }
+    }
+
+    // Visualize the ground check in the editor
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }
     #endregion
