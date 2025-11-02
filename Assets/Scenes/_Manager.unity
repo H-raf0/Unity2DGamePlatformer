@@ -548,7 +548,7 @@ MonoBehaviour:
   mainCamera: {fileID: 975474338}
   gameoverObject: {fileID: 898573019}
   mainMenuBuildIndex: 1
-  firstLevelBuildIndex: 3
+  firstLevelBuildIndex: 2
   currentCheckpoint: {fileID: 0}
 --- !u!4 &1038915356
 Transform:

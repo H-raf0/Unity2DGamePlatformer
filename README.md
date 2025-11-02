@@ -4,8 +4,9 @@
 
 **This is a student project created for my portfolio. The game is a work in progress.**
 
-![Gameplay GIF](https://via.placeholder.com/600x350.png?text=!!+REPLACE+THIS+WITH+A+GIF+OF+YOUR+GAMEPLAY+!!)
-*(I highly recommend you record a short GIF of your gameplay and replace the link above. This is the most important part of the README!)*
+**Gameplay :**
+
+![Gameplay GIF](myGameGIf.gif)
 
 ---
 
