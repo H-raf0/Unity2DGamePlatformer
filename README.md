@@ -4,7 +4,7 @@
 
 **This is a student project created for my portfolio. The game is a work in progress.**
 
-**Gameplay :**
+**Gameplay demo :**
 
 ![Gameplay GIF](myGameGIf.gif)
 
